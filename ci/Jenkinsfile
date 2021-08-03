@@ -1,8 +1,21 @@
 node{
   stage("pending")
   {
-      withChecks('MyCheck') {
-        echo "yes"
-      }
+    cleanWs()
+    git url:"git@github.com:StavBenSimchon/ci-demo.git", branch:'main'
+    sh '''
+    git reset --hard origin/main
+    echo "a" >> a
+    git add -A
+    git commit -m "test"
+    git push origin main
+    '''
+    cleanWs()
+    git url:"git@github.com:StavBenSimchon/ci-demo.git", branch:'test'
+    sh '''
+    git reset --hard origin/test
+    git merge origin/main --no-ff --no-edit 
+    git push origin test
+    '''
   }
 }
